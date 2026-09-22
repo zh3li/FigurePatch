@@ -48,11 +48,7 @@ def test_estimate_figsize_2x2_grid() -> None:
 
 def _get_labels(axes):
     """Extract panel label text from axes."""
-    labels = []
-    for ax in axes:
-        texts = [t.get_text() for t in ax.texts if t.get_text().strip()]
-        labels.append(texts[-1] if texts else "")
-    return labels
+    return [ax.get_title(loc="left") for ax in axes]
 
 
 def test_add_labels_letters() -> None:

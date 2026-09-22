@@ -122,11 +122,7 @@ def test_render_returns_figure() -> None:
 
 def _get_labels(axes):
     """Extract panel label text from axes."""
-    labels = []
-    for ax in axes:
-        texts = [t.get_text() for t in ax.texts if t.get_text().strip()]
-        labels.append(texts[-1] if texts else "")
-    return labels
+    return [ax.get_title(loc="left") for ax in axes]
 
 
 def test_render_labels_default() -> None:

@@ -81,7 +81,7 @@ def panel_f(ax):
 
 with style():
     fig = (panel_a | panel_b | panel_c) / (panel_d | panel_e | panel_f)
-    fig = fig.render(figsize=(10, 6), gap=0.06)
+    fig = fig.render(figsize=(8.0, 5.0))
     fig.savefig(OUTPUT / "grid_2x3.pdf")
     fig.savefig(OUTPUT / "grid_2x3.png", dpi=288, transparent=True)
     plt.close(fig)

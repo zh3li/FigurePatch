@@ -51,15 +51,14 @@ class Panel:
         self,
         figsize: tuple[float, float] | None = None,
         labels: bool | str = False,
-        gap: float = 0.04,
+        gap: float | None = None,
     ) -> "Figure":
         """Render this single panel as a Matplotlib Figure."""
 
         import matplotlib.pyplot as plt
         from figpatch._layout import add_labels
 
-        fig = plt.figure(figsize=figsize or (6.0, 4.0))
-        ax = fig.add_axes([gap / 2, gap / 2, 1 - gap, 1 - gap])
+        fig, ax = plt.subplots(figsize=figsize or (6.0, 4.0), layout="constrained")
         self._func(ax)
         add_labels([ax], labels)
         return fig

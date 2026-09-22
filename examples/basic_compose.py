@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import figpatch as fp
+from _style import BLUE, SALMON, setup_ax, style
 
 OUTPUT = Path(__file__).parent / "output"
 OUTPUT.mkdir(exist_ok=True)
@@ -21,22 +22,25 @@ x = np.linspace(0, 10, 50)
 
 @fp.panel
 def panel_a(ax):
-    ax.plot(x, np.sin(x), "o-", color="#0072B2")
+    ax.plot(x, np.sin(x), "o-", color=BLUE, linewidth=1.0, markersize=3)
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Amplitude")
     ax.set_title("Sine wave")
+    setup_ax(ax)
 
 
 @fp.panel
 def panel_b(ax):
-    ax.scatter(x, np.cos(x), color="#D55E00", s=20)
+    ax.scatter(x, np.cos(x), color=SALMON, s=12)
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Amplitude")
     ax.set_title("Cosine wave")
+    setup_ax(ax)
 
 
-fig = (panel_a | panel_b).render(figsize=(10, 4))
-fig.savefig(OUTPUT / "basic_compose.pdf")
-fig.savefig(OUTPUT / "basic_compose.png", dpi=150)
-plt.close(fig)
-print(f"Saved to {OUTPUT / 'basic_compose.pdf'}")
+with style():
+    fig = (panel_a | panel_b).render(figsize=(6, 3))
+    fig.savefig(OUTPUT / "basic_compose.pdf")
+    fig.savefig(OUTPUT / "basic_compose.png", dpi=288, transparent=True)
+    plt.close(fig)
+print(f"Saved to {OUTPUT / 'basic_compose.png'}")

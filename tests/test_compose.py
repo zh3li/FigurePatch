@@ -184,10 +184,96 @@ def test_chain_three_horizontal() -> None:
     tree = a | b | c
     panels_areas = tree._flatten(0, 0, 1, 1)
     assert len(panels_areas) == 3
-    # (a | (b | c)) → a gets 1/2, b gets 1/4, c gets 1/4
-    _, area_a = panels_areas[0]
-    assert area_a[2] == pytest.approx(0.25)
+    for _, area in panels_areas:
+        assert area[2] == pytest.approx(1 / 3)  # equal width
     plt.close(tree.render())
+
+
+def test_chain_six_horizontal() -> None:
+    panels = [_make_panel(f"p{i}") for i in range(6)]
+    tree = panels[0]
+    for p in panels[1:]:
+        tree = tree | p
+    areas = tree._flatten(0, 0, 1, 1)
+    assert len(areas) == 6
+    for _, area in areas:
+        assert area[2] == pytest.approx(1 / 6)
+    plt.close(tree.render())
+
+
+def test_chain_three_vertical() -> None:
+    a, b, c = _make_panel("a"), _make_panel("b"), _make_panel("c")
+    tree = a / b / c
+    areas = tree._flatten(0, 0, 1, 1)
+    assert len(areas) == 3
+    for _, area in areas:
+        assert area[3] == pytest.approx(1 / 3)  # equal height
+    plt.close(tree.render())
+
+
+def test_flatten_2x3_grid() -> None:
+    ps = [_make_panel(f"p{i}") for i in range(6)]
+    tree = (ps[0] | ps[1] | ps[2]) / (ps[3] | ps[4] | ps[5])
+    areas = tree._flatten(0, 0, 1, 1)
+    assert len(areas) == 6
+    for _, area in areas:
+        assert area[2] == pytest.approx(1 / 3)  # width
+        assert area[3] == pytest.approx(1 / 2)  # height
+    plt.close(tree.render())
+
+
+def test_flatten_3x2_grid() -> None:
+    ps = [_make_panel(f"p{i}") for i in range(6)]
+    tree = (ps[0] | ps[1]) / (ps[2] | ps[3]) / (ps[4] | ps[5])
+    areas = tree._flatten(0, 0, 1, 1)
+    assert len(areas) == 6
+    for _, area in areas:
+        assert area[2] == pytest.approx(1 / 2)  # width
+        assert area[3] == pytest.approx(1 / 3)  # height
+    plt.close(tree.render())
+
+
+def test_flatten_3x3_grid() -> None:
+    ps = [_make_panel(f"p{i}") for i in range(9)]
+    tree = (ps[0] | ps[1] | ps[2]) / (ps[3] | ps[4] | ps[5]) / (ps[6] | ps[7] | ps[8])
+    areas = tree._flatten(0, 0, 1, 1)
+    assert len(areas) == 9
+    for _, area in areas:
+        assert area[2] == pytest.approx(1 / 3)  # width
+        assert area[3] == pytest.approx(1 / 3)  # height
+    plt.close(tree.render())
+
+
+def test_flatten_irregular_3_2_3() -> None:
+    ps = [_make_panel(f"p{i}") for i in range(8)]
+    tree = (ps[0] | ps[1] | ps[2]) / (ps[3] | ps[4]) / (ps[5] | ps[6] | ps[7])
+    areas = tree._flatten(0, 0, 1, 1)
+    assert len(areas) == 8
+
+    # Row 1: 3 panels, each 1/3 width
+    for i in range(3):
+        assert areas[i][1][2] == pytest.approx(1 / 3)
+        assert areas[i][1][3] == pytest.approx(1 / 3)
+
+    # Row 2: 2 panels, each 1/2 width
+    for i in range(3, 5):
+        assert areas[i][1][2] == pytest.approx(1 / 2)
+        assert areas[i][1][3] == pytest.approx(1 / 3)
+
+    # Row 3: 3 panels, each 1/3 width
+    for i in range(5, 8):
+        assert areas[i][1][2] == pytest.approx(1 / 3)
+        assert areas[i][1][3] == pytest.approx(1 / 3)
+
+    plt.close(tree.render())
+
+
+def test_render_3x3_axes_count() -> None:
+    ps = [_make_panel(f"p{i}") for i in range(9)]
+    tree = (ps[0] | ps[1] | ps[2]) / (ps[3] | ps[4] | ps[5]) / (ps[6] | ps[7] | ps[8])
+    fig = tree.render()
+    assert len(fig.axes) == 9
+    plt.close(fig)
 
 
 def test_compose_figures_horizontal() -> None:

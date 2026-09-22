@@ -74,6 +74,28 @@ class Compose:
         add_labels(axes, labels)
         return fig
 
+    def _collect_children(self) -> list[_PanelLike]:
+        """Collect all children at the same composition level.
+
+        When a child has the same direction as this node, its children
+        are merged into the result so that all siblings share space equally.
+        """
+
+        if self.right is None:
+            return [self.left]
+
+        children: list[_PanelLike] = []
+        for child in (self.left, self.right):
+            if (
+                isinstance(child, Compose)
+                and child.direction == self.direction
+                and child.right is not None
+            ):
+                children.extend(child._collect_children())
+            else:
+                children.append(child)
+        return children
+
     def _flatten(
         self,
         x: float,
@@ -86,18 +108,21 @@ class Compose:
         if self.right is None:
             return [(self.left, (x, y, w, h))]
 
+        children = self._collect_children()
+        n = len(children)
+
         if self.direction == "h":
-            left_w = w / 2
-            right_w = w - left_w
-            left = _flatten_node(self.left, x, y, left_w, h)
-            right = _flatten_node(self.right, x + left_w, y, right_w, h)
-            return left + right
+            panel_w = w / n
+            result: list[tuple[object, tuple[float, float, float, float]]] = []
+            for i, child in enumerate(children):
+                result.extend(_flatten_node(child, x + i * panel_w, y, panel_w, h))
+            return result
         else:
-            top_h = h / 2
-            bottom_h = h - top_h
-            top = _flatten_node(self.left, x, y, w, top_h)
-            bottom = _flatten_node(self.right, x, y + top_h, w, bottom_h)
-            return top + bottom
+            panel_h = h / n
+            result = []
+            for i, child in enumerate(children):
+                result.extend(_flatten_node(child, x, y + i * panel_h, w, panel_h))
+            return result
 
 
 def _flatten_node(

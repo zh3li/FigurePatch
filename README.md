@@ -159,20 +159,53 @@ Matplotlib-backed pipeline.
 | pandas plotting | Works — pass `ax` to `df.plot()` |
 | Seaborn (figure-level) | Use `fp.compose()` on the returned figure |
 
-## Examples
+## Gallery
+
+### Basic composition — `panel_a | panel_b`
+
+![Basic composition](docs/assets/basic_compose.png)
+
+### Nested layout — `(panel_a | panel_b) / panel_c`
+
+C spans the full width automatically.
+
+![Nested layout](docs/assets/complex_layout.png)
+
+### 2×3 grid — `(a | b | c) / (d | e | f)`
+
+![2x3 grid](docs/assets/grid_2x3.png)
+
+### 3×3 grid — `(a | b | c) / (d | e | f) / (g | h | i)`
+
+![3x3 grid](docs/assets/grid_3x3.png)
+
+### Single row — `a | b | c | d | e | f`
+
+![1x6 row](docs/assets/grid_1x6.png)
+
+### Irregular rows — `(a | b | c) / (d | e) / (f | g | h)`
+
+Row 1 has 3 columns, row 2 has 2 wider columns, row 3 has 3 again.
+
+![Irregular 3+2+3](docs/assets/irregular_3_2_3.png)
+
+### Compose existing figures — `fp.compose(fig1, fig2, fig3)`
+
+No need to rewrite plotting code — compose figures you already have.
+
+![Figure compose](docs/assets/figure_compose.png)
+
+### Run the examples
 
 ```bash
 git clone https://github.com/l1zhe/figpatch.git
-cd figpatch
-uv sync
+cd figpatch && uv sync
 
-# Basic two-panel composition
 uv run python examples/basic_compose.py
-
-# Complex nested layout: (A | B) / C
-uv run python examples/complex_layout.py
-
-# Compose existing figures
+uv run python examples/grid_2x3.py
+uv run python examples/grid_3x3.py
+uv run python examples/grid_1x6.py
+uv run python examples/irregular_3_2_3.py
 uv run python examples/figure_compose.py
 ```
 

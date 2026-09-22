@@ -276,7 +276,7 @@ wheels = [
 ]
 
 [[package]]
-name = "figpatch"
+name = "figurepatch"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

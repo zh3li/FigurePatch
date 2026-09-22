@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-import figpatch as fp
+import figurepatch as fp
 from _style import PALETTE, BLUE, SALMON, TEAL, SLATE, CRIMSON, BROWN, setup_ax, style
 
 OUTPUT = Path(__file__).parent / "output"

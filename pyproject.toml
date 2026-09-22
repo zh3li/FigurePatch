@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "figpatch"
+name = "figurepatch"
 version = "0.1.0"
 description = "Compose multi-panel Matplotlib figures with | and / operators"
 readme = "README.md"
@@ -26,4 +26,4 @@ addopts = "-q"
 testpaths = ["tests"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/figpatch"]
+packages = ["src/figurepatch", "src/figpatch"]

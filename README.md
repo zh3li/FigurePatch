@@ -1,58 +1,167 @@
-# figpatch
+# FigurePatch
 
 **Compose multi-panel Matplotlib figures with `|` and `/` operators.**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB)](https://www.python.org/)
 [![Matplotlib](https://img.shields.io/badge/built%20for-Matplotlib-11557C)](https://matplotlib.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2EA44F)](LICENSE)
-[![Status: alpha](https://img.shields.io/badge/status-alpha-EF8B2C)](#project-status)
 
-figpatch brings R's [patchwork](https://github.com/thomasp85/patchwork) composition
-syntax to Matplotlib. Wrap your plotting code in panels, then compose them with
-operators. No gridspec, no `subplot_mosaic`, no manual positioning.
+FigurePatch brings intuitive layout operators to Matplotlib. Wrap your existing plotting functions into panels, then compose them effortlessly using `|` (side-by-side) and `/` (stacked).
 
-It is **not** a plotting API. Your Matplotlib, Seaborn, pandas, or domain library
-continues to create the plots. figpatch handles the layout.
+Powered by Matplotlib's native `constrained_layout` engine — automatically prevents text overlap, clips nothing, and reserves proper margins for labels, titles, and colorbars.
 
-## Quick start
+---
+
+## ⚡ The Mental Model in 5 Seconds
+
+| Operator | Meaning | Layout |
+|---|---|---|
+| `p1 | p2` | Side-by-side | Horizontal split |
+| `p1 / p2` | Stacked | Vertical split |
+| `(p1 | p2) / p3` | Nested spanning | Top row 2 panels, bottom row spans full width |
+| `(p1 | p2 | p3) / (p4 | p5 | p6)` | Equal grid | 2 rows × 3 columns |
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-pip install figpatch
+pip install figurepatch
 ```
 
 ```python
 import matplotlib.pyplot as plt
-import figpatch as fp
+import figurepatch as fp
 
 @fp.panel
 def panel_a(ax):
     ax.plot([1, 2, 3], [2, 4, 3])
-    ax.set_xlabel("Time")
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Signal")
 
 @fp.panel
 def panel_b(ax):
     ax.scatter([1, 2, 3], [3, 1, 2])
-    ax.set_xlabel("Feature")
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Noise")
 
+# Compose side-by-side with automatic A, B labels
 fig = (panel_a | panel_b).render()
 fig.savefig("figure.pdf")
 ```
 
-## Why figpatch?
+---
 
-### Before: gridspec hell
+## 🖼️ Visual Gallery & Layout Recipes
+
+### 1. Side-by-Side — `panel_a | panel_b`
+
+Two panels arranged horizontally.
+
+```python
+fig = (panel_a | panel_b).render(figsize=(7.2, 3.2))
+```
+
+![Basic composition](docs/assets/basic_compose.png)
+
+---
+
+### 2. Nested Spanning — `(panel_a | panel_b) / panel_c`
+
+`panel_c` spans the entire bottom row automatically without manual `colspan`.
+
+```python
+fig = ((panel_a | panel_b) / panel_c).render(figsize=(6.5, 5.0))
+```
+
+![Nested layout](docs/assets/complex_layout.png)
+
+---
+
+### 3. 2×3 Grid — `(A | B | C) / (D | E | F)`
+
+Six panels with equal column widths across two rows.
+
+```python
+fig = (panel_a | panel_b | panel_c) / (panel_d | panel_e | panel_f)
+fig = fig.render(figsize=(8.0, 5.0))
+```
+
+![2x3 grid](docs/assets/grid_2x3.png)
+
+---
+
+### 4. 3×3 Grid — 9 Panels
+
+Complete multi-panel display with mixed plot types (lines, scatter, bars, boxplots, heatmaps, pie charts).
+
+```python
+fig = (
+    (panel_a | panel_b | panel_c)
+    / (panel_d | panel_e | panel_f)
+    / (panel_g | panel_h | panel_i)
+).render(figsize=(8.5, 8.5))
+```
+
+![3x3 grid](docs/assets/grid_3x3.png)
+
+---
+
+### 5. Single Row — `A | B | C | D | E | F`
+
+Six panels chained in a single horizontal strip.
+
+```python
+fig = (p1 | p2 | p3 | p4 | p5 | p6).render(figsize=(13.0, 2.5))
+```
+
+![1x6 row](docs/assets/grid_1x6.png)
+
+---
+
+### 6. Irregular Rows — `(A | B | C) / (D | E) / (F | G | H)`
+
+Row 1 has 3 panels, Row 2 has 2 wider panels (with colorbar), Row 3 has 3 panels.
+
+```python
+fig = (
+    (panel_a | panel_b | panel_c)
+    / (panel_d | panel_e)
+    / (panel_f | panel_g | panel_h)
+).render(figsize=(8.5, 7.5))
+```
+
+![Irregular 3+2+3](docs/assets/irregular_3_2_3.png)
+
+---
+
+### 7. Compose Existing Figures — `fp.compose(fig1, fig2, fig3)`
+
+Have existing `Figure` objects from disparate scripts or libraries? Compose them without rewriting your plotting code.
+
+```python
+fig = fp.compose(fig1, fig2, fig3, direction="h", figsize=(9.0, 3.0))
+```
+
+![Figure compose](docs/assets/figure_compose.png)
+
+---
+
+## 💡 Why FigurePatch?
+
+### Before: Matplotlib GridSpec Boilerplate
 
 ```python
 fig = plt.figure(figsize=(10, 8))
 gs = fig.add_gridspec(2, 2)
 ax1 = fig.add_subplot(gs[0, 0])
 ax2 = fig.add_subplot(gs[0, 1])
-ax3 = fig.add_subplot(gs[1, :])  # spans full width
+ax3 = fig.add_subplot(gs[1, :])  # manual spanning
 
 ax1.plot(x, y1)
 ax1.set_xlabel("Time")
 ax2.scatter(x, y2)
-ax2.set_xlabel("Feature A")
+ax2.set_xlabel("Feature")
 ax3.bar(x, y3)
 ax3.set_xlabel("Group")
 
@@ -60,148 +169,76 @@ fig.tight_layout()
 fig.savefig("figure.pdf")
 ```
 
-### After: figpatch
+### After: FigurePatch
 
 ```python
-@fp.panel
-def panel_a(ax):
-    ax.plot(x, y1)
-    ax.set_xlabel("Time")
-
-@fp.panel
-def panel_b(ax):
-    ax.scatter(x, y2)
-    ax.set_xlabel("Feature A")
-
-@fp.panel
-def panel_c(ax):
-    ax.bar(x, y3)
-    ax.set_xlabel("Group")
-
 fig = ((panel_a | panel_b) / panel_c).render()
 fig.savefig("figure.pdf")
 ```
 
-The complex layout `(A | B) / C` where C spans the full width is handled
-automatically — no manual `gridspec` or `colspan` needed.
+---
 
-## Features
+## 🛠️ How It Works
 
-- **Operator-based composition** — `|` for side-by-side, `/` for stacked
-- **Nested layouts** — `(a | b) / c` where c spans full width, `a | (b / c)`
-  where a spans full height
-- **Function-based panels** — `@fp.panel` decorator wraps any plotting code
-- **Figure-based composition** — `fp.compose(fig1, fig2)` for existing figures
-- **Panel labels** — automatic A, B, C... labels (or custom prefixes like S1, S2)
-- **Any Matplotlib-based library** — Seaborn, pandas, plotnine, etc.
-- **Zero styling opinions** — bring your own style (SciencePlots, seaborn, etc.)
-- **Minimal** — Matplotlib is the only runtime dependency
+FigurePatch compiles arbitrary composition trees into an exact 2D mosaic matrix, rendered through Matplotlib's native `layout="constrained"` engine:
 
-## API
+1. **Automatic Area Alignment**: Chained horizontal or vertical panels automatically find their common least multiple and expand cleanly into grid cells.
+2. **Zero Text Collision**: Dynamically measures bounding boxes for every tick mark, axis label, title, and colorbar to guarantee no overlapping text.
+3. **No Edge Truncation**: Automatically reserves perimeter margins so negative tick values (e.g. `-1.00`) and titles are never cropped off.
+4. **Bold Panel Labels**: Adds **A**, **B**, **C**... labels at the top-left of each axes that coexist harmoniously with centered plot titles.
+
+---
+
+## 📖 API Reference
 
 ### `@fp.panel`
-
-Decorator that wraps a plotting function into a `Panel`:
-
+Decorator converting a plotting function `func(ax)` into a composable `Panel`:
 ```python
 @fp.panel
-def my_panel(ax):
+def my_plot(ax):
     ax.plot(x, y)
-    ax.set_xlabel("Time")
 ```
 
-### Operators: `|` and `/`
+### Operators
+- `panel_a | panel_b`: Places panels side-by-side.
+- `panel_a / panel_b`: Stacks panels vertically.
 
-```python
-panel_a | panel_b      # side-by-side (horizontal)
-panel_a / panel_b      # stacked (vertical)
-(panel_a | panel_b) / panel_c   # A and B on top, C spans full width below
-panel_a | (panel_b / panel_c)   # A on left spanning full height, B and C on right
-```
+### `.render(figsize=None, labels=True)`
+Renders the composition tree into a `matplotlib.figure.Figure`.
+- `figsize`: `(width, height)` in inches. Auto-estimated when omitted.
+- `labels`: `True` for bold **A**, **B**, **C**... labels; a string (e.g. `"S"`) for prefixed labels (`S1`, `S2`...); or `False` to disable.
 
-### `.render()`
+### `fp.compose(*items, direction="h", figsize=None, labels=True)`
+Post-hoc composition for existing `Figure` or `Axes` objects.
 
-```python
-fig = (panel_a | panel_b).render(
-    figsize=(10, 4),     # auto-calculated if omitted
-    labels=True,         # A, B, C... (default), "S" for S1/S2, False to disable
-    gap=0.04,            # spacing between panels (figure-relative units)
-)
-```
+---
 
-### `fp.compose()`
+## 🔌 Compatibility
 
-Compose existing figures or axes without rewriting code:
+FigurePatch receives standard `matplotlib.axes.Axes`, making it 100% compatible with any library that plots on an existing axes:
 
-```python
-fig1, ax1 = plt.subplots()
-ax1.plot(x, y)
+| Library | Usage | Status |
+|---|---|---|
+| **Matplotlib** | Direct plotting on `ax` | ✅ Supported |
+| **Seaborn** | Pass `ax=ax` (e.g., `sns.lineplot(..., ax=ax)`) | ✅ Supported |
+| **pandas** | Pass `ax=ax` (e.g., `df.plot(..., ax=ax)`) | ✅ Supported |
+| **Scanpy** | Pass `ax=ax` (e.g., `sc.pl.umap(..., ax=ax)`) | ✅ Supported |
 
-fig2, ax2 = plt.subplots()
-ax2.scatter(x, y)
+---
 
-fig = fp.compose(fig1, fig2, direction="h", labels=True)
-fig.savefig("composed.pdf")
-```
-
-Supports `Figure` and `Axes` objects. Artist extraction handles lines, scatter
-collections, bar patches, images, text, and legends.
-
-## Compatibility
-
-figpatch operates on `matplotlib.axes.Axes`, so it works at the end of any
-Matplotlib-backed pipeline.
-
-| Producer | Status |
-| --- | --- |
-| Matplotlib | Tested |
-| Seaborn (axis-level) | Works — pass `ax` to `sns.lineplot`, `sns.scatterplot`, etc. |
-| pandas plotting | Works — pass `ax` to `df.plot()` |
-| Seaborn (figure-level) | Use `fp.compose()` on the returned figure |
-
-## Gallery
-
-### Basic composition — `panel_a | panel_b`
-
-![Basic composition](docs/assets/basic_compose.png)
-
-### Nested layout — `(panel_a | panel_b) / panel_c`
-
-C spans the full width automatically.
-
-![Nested layout](docs/assets/complex_layout.png)
-
-### 2×3 grid — `(a | b | c) / (d | e | f)`
-
-![2x3 grid](docs/assets/grid_2x3.png)
-
-### 3×3 grid — `(a | b | c) / (d | e | f) / (g | h | i)`
-
-![3x3 grid](docs/assets/grid_3x3.png)
-
-### Single row — `a | b | c | d | e | f`
-
-![1x6 row](docs/assets/grid_1x6.png)
-
-### Irregular rows — `(a | b | c) / (d | e) / (f | g | h)`
-
-Row 1 has 3 columns, row 2 has 2 wider columns, row 3 has 3 again.
-
-![Irregular 3+2+3](docs/assets/irregular_3_2_3.png)
-
-### Compose existing figures — `fp.compose(fig1, fig2, fig3)`
-
-No need to rewrite plotting code — compose figures you already have.
-
-![Figure compose](docs/assets/figure_compose.png)
-
-### Run the examples
+## 💻 Development & Examples
 
 ```bash
-git clone https://github.com/l1zhe/figpatch.git
-cd figpatch && uv sync
+git clone https://gitee.com/l1zhe/figpatch.git
+cd figpatch
+uv sync
 
+# Run the test suite
+uv run pytest
+
+# Run any gallery example
 uv run python examples/basic_compose.py
+uv run python examples/complex_layout.py
 uv run python examples/grid_2x3.py
 uv run python examples/grid_3x3.py
 uv run python examples/grid_1x6.py
@@ -209,40 +246,8 @@ uv run python examples/irregular_3_2_3.py
 uv run python examples/figure_compose.py
 ```
 
-## Project status
+---
 
-figpatch `0.1.0` is a tested alpha. The API may change while it is exercised
-against real scientific figures.
+## 📄 License
 
-Roadmap:
-
-- Custom width/height ratios (`plot_layout(widths=[2, 1])`)
-- Shared axes across panels
-- Complex artist types (contour, pcolormesh, 3D)
-- Colorbar handling
-- CLI
-
-## Development
-
-```bash
-uv sync
-uv run pytest
-uv build
-```
-
-## Citation
-
-If figpatch helps your research, please cite it:
-
-```bibtex
-@software{figpatch,
-  author = {Zhe Li},
-  title  = {figpatch: Compose multi-panel Matplotlib figures with | and / operators},
-  year   = {2026},
-  url    = {https://github.com/l1zhe/figpatch}
-}
-```
-
-## License
-
-figpatch is available under the [MIT License](LICENSE).
+FigurePatch is available under the [MIT License](LICENSE).

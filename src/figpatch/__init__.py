@@ -1,7 +1,6 @@
-"""Compose multi-panel Matplotlib figures with | and / operators."""
+"""Compatibility alias for figurepatch."""
 
-from figpatch._compose import Compose, compose
-from figpatch._panel import Panel, panel
+from figurepatch import Compose, Panel, compose, panel
 
 __all__ = ["Compose", "Panel", "compose", "panel"]
 __version__ = "0.1.0"

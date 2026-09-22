@@ -51,7 +51,7 @@ def panel_c(ax):
 
 
 with style():
-    fig = ((panel_a | panel_b) / panel_c).render(figsize=(6, 5))
+    fig = ((panel_a | panel_b) / panel_c).render(figsize=(7, 6), gap=0.06)
     fig.savefig(OUTPUT / "complex_layout.pdf")
     fig.savefig(OUTPUT / "complex_layout.png", dpi=288, transparent=True)
     plt.close(fig)

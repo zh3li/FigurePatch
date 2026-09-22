@@ -42,4 +42,11 @@ def add_labels(axes: "Sequence[Axes]", labels: bool | str = True) -> None:
             label = string.ascii_uppercase[i] if i < 26 else str(i + 1)
         else:
             label = f"{prefix}{i + 1}"
-        ax.set_title(label, loc="left", fontsize=11, fontweight="bold")
+        ax.text(
+            -0.15, 1.08, label,
+            transform=ax.transAxes,
+            fontsize=11,
+            fontweight="bold",
+            va="bottom",
+            ha="left",
+        )

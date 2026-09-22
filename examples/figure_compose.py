@@ -41,7 +41,7 @@ with style():
     ax3.set_title("Bar")
     setup_ax(ax3)
 
-    composed = fp.compose(fig1, fig2, fig3, direction="h", figsize=(9, 3))
+    composed = fp.compose(fig1, fig2, fig3, direction="h", figsize=(11, 3.5), gap=0.06)
     composed.savefig(OUTPUT / "figure_compose.pdf")
     composed.savefig(OUTPUT / "figure_compose.png", dpi=288, transparent=True)
     plt.close(fig1)

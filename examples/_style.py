@@ -21,9 +21,9 @@ _RC_PARAMS: dict[str, object] = {
     "font.size": 8,
     "axes.titlesize": 8,
     "axes.titleweight": "bold",
-    "axes.titlepad": 4,
+    "axes.titlepad": 6,
     "axes.labelsize": 8,
-    "axes.labelpad": 2,
+    "axes.labelpad": 4,
     "axes.labelcolor": "black",
     "axes.linewidth": 0.5,
     "axes.edgecolor": "black",
@@ -40,8 +40,8 @@ _RC_PARAMS: dict[str, object] = {
     "ytick.major.size": 2,
     "xtick.major.width": 0.6,
     "ytick.major.width": 0.6,
-    "xtick.major.pad": 1,
-    "ytick.major.pad": 1,
+    "xtick.major.pad": 2,
+    "ytick.major.pad": 2,
     "xtick.alignment": "center",
     "ytick.alignment": "center_baseline",
     "legend.fontsize": 7,
@@ -54,8 +54,7 @@ _RC_PARAMS: dict[str, object] = {
     "lines.markersize": 3,
     "savefig.dpi": 288,
     "savefig.transparent": True,
-    "savefig.bbox": "tight",
-    "savefig.pad_inches": 0.01,
+    "savefig.pad_inches": 0.1,
     "pdf.fonttype": 42,
     "svg.fonttype": "none",
 }
@@ -113,7 +112,7 @@ def setup_ax(ax) -> None:
         labelsize=7,
         width=0.6,
         length=2,
-        pad=1,
+        pad=2,
     )
     ax.xaxis.label.set_fontsize(8)
     ax.yaxis.label.set_fontsize(8)

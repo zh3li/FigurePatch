@@ -120,27 +120,33 @@ def test_render_returns_figure() -> None:
     plt.close(fig)
 
 
+def _get_labels(axes):
+    """Extract panel label text from axes."""
+    labels = []
+    for ax in axes:
+        texts = [t.get_text() for t in ax.texts if t.get_text().strip()]
+        labels.append(texts[-1] if texts else "")
+    return labels
+
+
 def test_render_labels_default() -> None:
     a, b = _make_panel("a"), _make_panel("b")
     fig = (a | b).render(labels=True)
-    titles = [ax.get_title(loc="left") for ax in fig.axes]
-    assert titles == ["A", "B"]
+    assert _get_labels(fig.axes) == ["A", "B"]
     plt.close(fig)
 
 
 def test_render_no_labels() -> None:
     a, b = _make_panel("a"), _make_panel("b")
     fig = (a | b).render(labels=False)
-    titles = [ax.get_title(loc="left") for ax in fig.axes]
-    assert titles == ["", ""]
+    assert _get_labels(fig.axes) == ["", ""]
     plt.close(fig)
 
 
 def test_render_prefix_labels() -> None:
     a, b = _make_panel("a"), _make_panel("b")
     fig = (a | b).render(labels="S")
-    titles = [ax.get_title(loc="left") for ax in fig.axes]
-    assert titles == ["S1", "S2"]
+    assert _get_labels(fig.axes) == ["S1", "S2"]
     plt.close(fig)
 
 

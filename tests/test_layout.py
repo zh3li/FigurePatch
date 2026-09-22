@@ -46,35 +46,42 @@ def test_estimate_figsize_2x2_grid() -> None:
     assert h == pytest.approx(6.0)
 
 
+def _get_labels(axes):
+    """Extract panel label text from axes."""
+    labels = []
+    for ax in axes:
+        texts = [t.get_text() for t in ax.texts if t.get_text().strip()]
+        labels.append(texts[-1] if texts else "")
+    return labels
+
+
 def test_add_labels_letters() -> None:
     fig, axes = plt.subplots(1, 3)
     add_labels(axes, True)
-    titles = [ax.get_title(loc="left") for ax in axes]
-    assert titles == ["A", "B", "C"]
+    assert _get_labels(axes) == ["A", "B", "C"]
     plt.close(fig)
 
 
 def test_add_labels_prefix() -> None:
     fig, axes = plt.subplots(1, 3)
     add_labels(axes, "S")
-    titles = [ax.get_title(loc="left") for ax in axes]
-    assert titles == ["S1", "S2", "S3"]
+    assert _get_labels(axes) == ["S1", "S2", "S3"]
     plt.close(fig)
 
 
 def test_add_labels_disabled() -> None:
     fig, axes = plt.subplots(1, 2)
     add_labels(axes, False)
-    titles = [ax.get_title(loc="left") for ax in axes]
-    assert titles == ["", ""]
+    assert _get_labels(axes) == ["", ""]
     plt.close(fig)
 
 
 def test_add_labels_more_than_26() -> None:
     fig, axes = plt.subplots(1, 28)
     add_labels(axes, True)
-    assert axes[0].get_title(loc="left") == "A"
-    assert axes[25].get_title(loc="left") == "Z"
-    assert axes[26].get_title(loc="left") == "27"
-    assert axes[27].get_title(loc="left") == "28"
+    labels = _get_labels(axes)
+    assert labels[0] == "A"
+    assert labels[25] == "Z"
+    assert labels[26] == "27"
+    assert labels[27] == "28"
     plt.close(fig)

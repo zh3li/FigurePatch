@@ -107,7 +107,7 @@ with style():
         / (panel_d | panel_e | panel_f)
         / (panel_g | panel_h | panel_i)
     )
-    fig = fig.render(figsize=(7.5, 7.5))
+    fig = fig.render(figsize=(10, 10), gap=0.06)
     fig.savefig(OUTPUT / "grid_3x3.pdf")
     fig.savefig(OUTPUT / "grid_3x3.png", dpi=288, transparent=True)
     plt.close(fig)

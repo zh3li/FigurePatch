@@ -99,7 +99,7 @@ with style():
         / (panel_d | panel_e)
         / (panel_f | panel_g | panel_h)
     )
-    fig = fig.render(figsize=(8, 8))
+    fig = fig.render(figsize=(10, 10), gap=0.06)
     fig.savefig(OUTPUT / "irregular_3_2_3.pdf")
     fig.savefig(OUTPUT / "irregular_3_2_3.png", dpi=288, transparent=True)
     plt.close(fig)

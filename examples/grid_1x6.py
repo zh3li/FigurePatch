@@ -73,7 +73,7 @@ def panel_f(ax):
 
 
 with style():
-    fig = (panel_a | panel_b | panel_c | panel_d | panel_e | panel_f).render(figsize=(10, 2.2))
+    fig = (panel_a | panel_b | panel_c | panel_d | panel_e | panel_f).render(figsize=(14, 3), gap=0.06)
     fig.savefig(OUTPUT / "grid_1x6.pdf")
     fig.savefig(OUTPUT / "grid_1x6.png", dpi=288, transparent=True)
     plt.close(fig)

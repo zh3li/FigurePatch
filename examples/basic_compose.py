@@ -39,7 +39,7 @@ def panel_b(ax):
 
 
 with style():
-    fig = (panel_a | panel_b).render(figsize=(6, 3))
+    fig = (panel_a | panel_b).render(figsize=(7, 3.5), gap=0.06)
     fig.savefig(OUTPUT / "basic_compose.pdf")
     fig.savefig(OUTPUT / "basic_compose.png", dpi=288, transparent=True)
     plt.close(fig)

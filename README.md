@@ -1,7 +1,8 @@
-# FigurePatch
+# 🧩 FigurePatch
 
 **Compose multi-panel Matplotlib figures with `|` and `/` operators.**
 
+[![PyPI](https://img.shields.io/pypi/v/figurepatch.svg)](https://pypi.org/project/figurepatch/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB)](https://www.python.org/)
 [![Matplotlib](https://img.shields.io/badge/built%20for-Matplotlib-11557C)](https://matplotlib.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2EA44F)](LICENSE)
@@ -12,7 +13,7 @@ Powered by Matplotlib's native `constrained_layout` engine — automatically pre
 
 ---
 
-## ⚡ The Mental Model in 5 Seconds
+## The Mental Model in 5 Seconds
 
 | Operator | Meaning | Layout |
 |---|---|---|
@@ -23,7 +24,7 @@ Powered by Matplotlib's native `constrained_layout` engine — automatically pre
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 pip install figurepatch
@@ -52,7 +53,7 @@ fig.savefig("figure.pdf")
 
 ---
 
-## 🖼️ Visual Gallery & Layout Recipes
+## Visual Gallery & Layout Recipes
 
 ### 1. Side-by-Side — `panel_a | panel_b`
 
@@ -147,7 +148,7 @@ fig = fp.compose(fig1, fig2, fig3, direction="h", figsize=(9.0, 3.0))
 
 ---
 
-## 💡 Why FigurePatch?
+## Why FigurePatch?
 
 ### Before: Matplotlib GridSpec Boilerplate
 
@@ -178,7 +179,7 @@ fig.savefig("figure.pdf")
 
 ---
 
-## 🛠️ How It Works
+## How It Works
 
 FigurePatch compiles arbitrary composition trees into an exact 2D mosaic matrix, rendered through Matplotlib's native `layout="constrained"` engine:
 
@@ -189,7 +190,7 @@ FigurePatch compiles arbitrary composition trees into an exact 2D mosaic matrix,
 
 ---
 
-## 📖 API Reference
+## API Reference
 
 ### `@fp.panel`
 Decorator converting a plotting function `func(ax)` into a composable `Panel`:
@@ -213,24 +214,24 @@ Post-hoc composition for existing `Figure` or `Axes` objects.
 
 ---
 
-## 🔌 Compatibility
+## Compatibility
 
 FigurePatch receives standard `matplotlib.axes.Axes`, making it 100% compatible with any library that plots on an existing axes:
 
 | Library | Usage | Status |
 |---|---|---|
-| **Matplotlib** | Direct plotting on `ax` | ✅ Supported |
-| **Seaborn** | Pass `ax=ax` (e.g., `sns.lineplot(..., ax=ax)`) | ✅ Supported |
-| **pandas** | Pass `ax=ax` (e.g., `df.plot(..., ax=ax)`) | ✅ Supported |
-| **Scanpy** | Pass `ax=ax` (e.g., `sc.pl.umap(..., ax=ax)`) | ✅ Supported |
+| **Matplotlib** | Direct plotting on `ax` | Supported |
+| **Seaborn** | Pass `ax=ax` (e.g., `sns.lineplot(..., ax=ax)`) | Supported |
+| **pandas** | Pass `ax=ax` (e.g., `df.plot(..., ax=ax)`) | Supported |
+| **Scanpy** | Pass `ax=ax` (e.g., `sc.pl.umap(..., ax=ax)`) | Supported |
 
 ---
 
-## 💻 Development & Examples
+## Development & Examples
 
 ```bash
-git clone https://gitee.com/l1zhe/figpatch.git
-cd figpatch
+git clone https://github.com/zh3li/FigurePatch.git
+cd FigurePatch
 uv sync
 
 # Run the test suite
@@ -248,6 +249,6 @@ uv run python examples/figure_compose.py
 
 ---
 
-## 📄 License
+## License
 
 FigurePatch is available under the [MIT License](LICENSE).

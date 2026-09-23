@@ -18,6 +18,11 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Visualization",
 ]
 
+[project.urls]
+Homepage = "https://github.com/zh3li/FigurePatch"
+Repository = "https://github.com/zh3li/FigurePatch"
+Issues = "https://github.com/zh3li/FigurePatch/issues"
+
 [dependency-groups]
 dev = ["pytest>=8"]
 

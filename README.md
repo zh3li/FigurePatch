@@ -22,6 +22,8 @@ Powered by Matplotlib's native `constrained_layout` engine — automatically pre
 | `(p1 | p2) / p3` | Nested spanning | Top row 2 panels, bottom row spans full width |
 | `(p1 | p2 | p3) / (p4 | p5 | p6)` | Equal grid | 2 rows × 3 columns |
 
+Operator precedence follows Python: `/` binds tighter than `|` (both left-associative), so `a | b / c | d` means `((a | (b / c)) | d)` — use parentheses to make spanning explicit. The same panel object may be reused any number of times (`p | p` gives two independent panels).
+
 ---
 
 ## Quick Start
@@ -184,7 +186,7 @@ fig.savefig("figure.pdf")
 FigurePatch compiles arbitrary composition trees into an exact 2D mosaic matrix, rendered through Matplotlib's native `layout="constrained"` engine:
 
 1. **Automatic Area Alignment**: Chained horizontal or vertical panels automatically find their common least multiple and expand cleanly into grid cells.
-2. **Zero Text Collision**: Dynamically measures bounding boxes for every tick mark, axis label, title, and colorbar to guarantee no overlapping text.
+2. **Zero Text Collision**: Dynamically measures bounding boxes for every tick mark, axis label, title, and colorbar to prevent overlapping text.
 3. **No Edge Truncation**: Automatically reserves perimeter margins so negative tick values (e.g. `-1.00`) and titles are never cropped off.
 4. **Bold Panel Labels**: Adds **A**, **B**, **C**... labels at the top-left of each axes that coexist harmoniously with centered plot titles.
 
@@ -209,8 +211,10 @@ Renders the composition tree into a `matplotlib.figure.Figure`.
 - `figsize`: `(width, height)` in inches. Auto-estimated when omitted.
 - `labels`: `True` for bold **A**, **B**, **C**... labels; a string (e.g. `"S"`) for prefixed labels (`S1`, `S2`...); or `False` to disable.
 
+Note: a lone `Panel.render()` defaults to `labels=False` — a single panel is usually not lettered.
+
 ### `fp.compose(*items, direction="h", figsize=None, labels=True)`
-Post-hoc composition for existing `Figure` or `Axes` objects.
+Post-hoc composition for existing `Figure` or `Axes` objects. Extraction round-trips lines, scatter, bars/rectangles, images (`imshow`), `pcolormesh`, `fill_between`/`stackplot`, `errorbar`, `hexbin`, pie wedges, texts, and legends — preserving limits, scales, categorical tick labels, image origin/aspect, and legend placement. Colorbar axes are folded away rather than occupying a grid cell. Contour plots are not yet extractable (a warning is emitted); wrap them in a `@fp.panel` instead.
 
 ---
 
@@ -224,6 +228,10 @@ FigurePatch receives standard `matplotlib.axes.Axes`, making it 100% compatible 
 | **Seaborn** | Pass `ax=ax` (e.g., `sns.lineplot(..., ax=ax)`) | Supported |
 | **pandas** | Pass `ax=ax` (e.g., `df.plot(..., ax=ax)`) | Supported |
 | **Scanpy** | Pass `ax=ax` (e.g., `sc.pl.umap(..., ax=ax)`) | Supported |
+
+The `@fp.panel` decorator accepts any function that draws on an `Axes`, so all of the above work as panels. The `fp.compose` extraction path additionally covers lines, scatter, bars, images, meshes, filled regions, errorbars, texts, and legends; exotic artists (contours, 3D, animations) are skipped with a warning.
+
+**Requires** Python 3.10+ and Matplotlib 3.9+.
 
 ---
 

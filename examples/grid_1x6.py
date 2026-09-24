@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import figurepatch as fp
-from _style import BLUE, SALMON, TEAL, SLATE, CRIMSON, BROWN, setup_ax, style
+from _style import BLUE, SALMON, TEAL, SLATE, CRIMSON, setup_ax, style
 
 OUTPUT = Path(__file__).parent / "output"
 OUTPUT.mkdir(exist_ok=True)

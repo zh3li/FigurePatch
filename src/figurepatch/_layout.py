@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import string
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -11,27 +11,22 @@ if TYPE_CHECKING:
 
 
 def estimate_figsize(
-    layout_spec: Any,
+    mosaic: list[list[str]],
     panel_w: float = 4.0,
     panel_h: float = 3.0,
 ) -> tuple[float, float]:
-    """Estimate figure size (inches) from a mosaic matrix or panel areas."""
+    """Estimate figure size (inches) from a mosaic matrix.
 
-    # If passed a 2D mosaic matrix (list of lists of strings)
-    if isinstance(layout_spec, list) and layout_spec and isinstance(layout_spec[0], list):
-        nrows = len(layout_spec)
-        max_cols = max(len(set(row)) for row in layout_spec)
-        return (max(max_cols * panel_w, 4.0), max(nrows * panel_h, 3.0))
+    Columns are counted per row (``len(row)``) so that spanning panels
+    expand the estimate to the true grid width.
+    """
 
-    # Backwards compatibility: passed a list of (panel, area) tuples
-    if isinstance(layout_spec, list) and layout_spec and isinstance(layout_spec[0], tuple):
-        x_starts = sorted({round(area[0], 6) for _, area in layout_spec})
-        y_starts = sorted({round(area[1], 6) for _, area in layout_spec})
-        ncols = max(len(x_starts), 1)
-        nrows = max(len(y_starts), 1)
-        return (max(ncols * panel_w, 4.0), max(nrows * panel_h, 3.0))
+    if not mosaic:
+        return (max(panel_w, 4.0), max(panel_h, 3.0))
 
-    return (8.0, 6.0)
+    nrows = len(mosaic)
+    ncols = max(len(row) for row in mosaic)
+    return (max(ncols * panel_w, 4.0), max(nrows * panel_h, 3.0))
 
 
 def add_labels(axes: "Sequence[Axes]", labels: bool | str = True) -> None:

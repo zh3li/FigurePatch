@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+
+    from figurepatch._compose import Compose
 
 
 class Panel:
@@ -28,32 +32,38 @@ class Panel:
 
     def __init__(self, func: "Callable[[Axes], None]", name: str | None = None) -> None:
         self._func = func
-        self._name = name or func.__name__
+        self._name = name or getattr(func, "__name__", repr(func))
 
     @property
     def name(self) -> str:
         return self._name
 
+    def __repr__(self) -> str:
+        return f"Panel({self._name})"
+
     def __call__(self, ax: "Axes") -> None:
         self._func(ax)
 
     def __or__(self, other: "Panel | Compose") -> "Compose":
-        from figurepatch._compose import Compose
+        from figurepatch._compose import Compose, _validate_operand
 
-        return Compose(self, other, direction="h")
+        return Compose(self, _validate_operand(other, "|"), direction="h")
 
     def __truediv__(self, other: "Panel | Compose") -> "Compose":
-        from figurepatch._compose import Compose
+        from figurepatch._compose import Compose, _validate_operand
 
-        return Compose(self, other, direction="v")
+        return Compose(self, _validate_operand(other, "/"), direction="v")
 
     def render(
         self,
         figsize: tuple[float, float] | None = None,
         labels: bool | str = False,
-        gap: float | None = None,
     ) -> "Figure":
-        """Render this single panel as a Matplotlib Figure."""
+        """Render this single panel as a Matplotlib Figure.
+
+        Unlike :meth:`Compose.render`, panel labels are disabled by
+        default — a lone panel is usually not lettered.
+        """
 
         import matplotlib.pyplot as plt
         from figurepatch._layout import add_labels

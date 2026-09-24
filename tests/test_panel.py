@@ -1,6 +1,5 @@
-import matplotlib
+import inspect
 
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pytest
 
@@ -15,6 +14,23 @@ def test_panel_decorator_returns_panel() -> None:
 
     assert isinstance(p, fp.Panel)
     assert p.name == "p"
+
+
+def test_panel_custom_name() -> None:
+    @fp.panel
+    def p(ax):
+        pass
+
+    named = fp.Panel(p._func, name="custom")
+    assert named.name == "custom"
+
+
+def test_panel_repr() -> None:
+    @fp.panel
+    def my_panel(ax):
+        pass
+
+    assert "my_panel" in repr(my_panel)
 
 
 def test_panel_call_executes_function() -> None:
@@ -77,6 +93,16 @@ def test_panel_render_creates_figure() -> None:
     plt.close(fig)
 
 
+def test_panel_render_labels_default_false() -> None:
+    @fp.panel
+    def p(ax):
+        ax.plot([1], [1])
+
+    fig = p.render()  # no explicit labels kwarg
+    assert fig.axes[0].get_title(loc="left") == ""
+    plt.close(fig)
+
+
 def test_panel_render_custom_figsize() -> None:
     @fp.panel
     def p(ax):
@@ -85,3 +111,22 @@ def test_panel_render_custom_figsize() -> None:
     fig = p.render(figsize=(10, 5))
     assert tuple(fig.get_size_inches()) == (10, 5)
     plt.close(fig)
+
+
+def test_panel_render_gap_removed() -> None:
+    @fp.panel
+    def p(ax):
+        ax.plot([1], [1])
+
+    assert "gap" not in inspect.signature(fp.Panel.render).parameters
+    with pytest.raises(TypeError):
+        p.render(gap=0.1)
+
+
+def test_panel_rejects_non_panel_operand() -> None:
+    @fp.panel
+    def p(ax):
+        pass
+
+    with pytest.raises(TypeError, match="unsupported operand"):
+        p | "other"

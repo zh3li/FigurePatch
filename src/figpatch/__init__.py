@@ -1,6 +1,5 @@
 """Compatibility alias for figurepatch."""
 
-from figurepatch import Compose, Panel, compose, panel
+from figurepatch import Compose, Panel, __version__, compose, panel
 
-__all__ = ["Compose", "Panel", "compose", "panel"]
-__version__ = "0.1.0"
+__all__ = ["Compose", "Panel", "__version__", "compose", "panel"]

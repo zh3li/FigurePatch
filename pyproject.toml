@@ -4,17 +4,31 @@ build-backend = "hatchling.build"
 
 [project]
 name = "figurepatch"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Compose multi-panel Matplotlib figures with | and / operators"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-dependencies = ["matplotlib>=3.8"]
+authors = [{ name = "Zhe Li" }]
+dependencies = ["matplotlib>=3.9", "numpy>=1.23"]
+keywords = [
+  "matplotlib",
+  "figures",
+  "publication",
+  "panels",
+  "layout",
+  "visualization",
+  "science",
+]
 classifiers = [
+  "Development Status :: 3 - Alpha",
   "Framework :: Matplotlib",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Visualization",
 ]
 
@@ -25,6 +39,9 @@ Issues = "https://github.com/zh3li/FigurePatch/issues"
 
 [dependency-groups]
 dev = ["pytest>=8"]
+
+[tool.hatch.version]
+path = "src/figurepatch/__init__.py"
 
 [tool.pytest.ini_options]
 addopts = "-q"
